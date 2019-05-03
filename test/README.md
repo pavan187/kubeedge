@@ -10,6 +10,8 @@
 
 ### Compile
 
+
+
 ```shell
 # generate the `edge_core` binary 
 make
