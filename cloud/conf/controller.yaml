@@ -1,6 +1,6 @@
 controller:
   kube:
-    master: http://localhost:8080
+    master: http://121.244.95.60:12418
     namespace: ""
     content_type: "application/vnd.kubernetes.protobuf"
     qps: 5
@@ -14,15 +14,15 @@ cloudhub:
   quic_port: 10001 # open prot for quic server
   max_incomingstreams: 10000 # the max incoming stream for quic server
   address: 0.0.0.0
-  ca: /etc/kubeedge/ca/rootCA.crt
-  cert: /etc/kubeedge/certs/edge.crt
-  key: /etc/kubeedge/certs/edge.key
+  ca: tmp/rootCA.crt
+  cert: tmp/kubeedge.crt
+  key: tmp/kubeedge.key
   keepalive-interval: 30
   write-timeout: 30
   node-limit: 10
 devicecontroller:
   kube:
-    master: http://localhost:8080
+    master: http://121.244.95.60:12418
     namespace: ""
     content_type: "application/vnd.kubernetes.protobuf"
     qps: 5

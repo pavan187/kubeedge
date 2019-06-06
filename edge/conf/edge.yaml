@@ -8,17 +8,17 @@ mqtt:
 
 edgehub:
     websocket:
-        url: wss://0.0.0.0:10000/e632aba927ea4ac2b575ec1603d56f10/fb4ebb70-2783-42b8-b3ef-63e2fd6d242e/events
-        certfile: /etc/kubeedge/certs/edge.crt
-        keyfile: /etc/kubeedge/certs/edge.key
+        url: wss://0.0.0.0:10000/e632aba927ea4ac2b575ec1603d56f10/integration-node-68vmbgv9v9/events
+        certfile: tmp/kubeedge.crt
+        keyfile: tmp/kubeedge.key
         handshake-timeout: 30 #second
         write-deadline: 15 # second
         read-deadline: 15 # second
     quic:
-        url: 127.0.0.1:10001
+        url: wss://0.0.0.0:10000/e632aba927ea4ac2b575ec1603d56f10/integration-node-68vmbgv9v9/events
         cafile: /etc/kubeedge/ca/rootCA.crt
-        certfile: /etc/kubeedge/certs/edge.crt
-        keyfile: /etc/kubeedge/certs/edge.key
+        certfile: tmp/kubeedge.crt
+        keyfile: tmp/kubeedge.key
         handshake-timeout: 30 #second
         write-deadline: 15 # second
         read-deadline: 15 # second
@@ -28,13 +28,13 @@ edgehub:
         heartbeat: 15  # second
         refresh-ak-sk-interval: 10 # minute
         auth-info-files-path: /var/IEF/secret
-        placement-url: https://10.154.193.32:7444/v1/placement_external/message_queue
+        placement-url: wss://0.0.0.0:10000/e632aba927ea4ac2b575ec1603d56f10/integration-node-68vmbgv9v9/events
         project-id: e632aba927ea4ac2b575ec1603d56f10
-        node-id: fb4ebb70-2783-42b8-b3ef-63e2fd6d242e
+        node-id: integration-node-68vmbgv9v9
 
 edged:
     register-node-namespace: default
-    hostname-override: fb4ebb70-2783-42b8-b3ef-63e2fd6d242e
+    hostname-override: integration-node-68vmbgv9v9
     interface-name: eth0
     node-status-update-frequency: 10 # second
     device-plugin-enabled: false

@@ -8,14 +8,14 @@ mqtt:
 
 controller:
     kube:
-       master: http://localhost:8080
+       master: http://121.244.95.60:12418
        namespace: "default"
        content_type: "application/vnd.kubernetes.protobuf"
        qps: 5
        burst: 10
        node_update_frequency: 10
-       node-id: fb4ebb70-2783-42b8-b3ef-63e2fd6d242e
-       node-name: fb4ebb70-2783-42b8-b3ef-63e2fd6d242e
+       node-id: integration-node-nv22x2vf4y
+       node-name: integration-node-nv22x2vf4y
     context:
        send-module: metaManager
        receive-module: controller
@@ -23,7 +23,7 @@ controller:
 
 edged:
     register-node-namespace: default
-    hostname-override: fb4ebb70-2783-42b8-b3ef-63e2fd6d242e
+    hostname-override: integration-node-nv22x2vf4y
     interface-name: eth0
     node-status-update-frequency: 10 # second
     device-plugin-enabled: false

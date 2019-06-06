@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+setuptype=$1
+
 kill_edge_core() {
    sudo pkill edge_core
     #kill the edge_core process if it exists.
@@ -40,6 +42,19 @@ kill_edgecontroller() {
     fi
 }
 
+kill_edgesite() {
+   sudo pkill edgesite
+    #kill the edge_core process if it exists.
+    sleep 5s
+    if pgrep edgesite >/dev/null
+    then
+        echo "Failed to kill edgesite process !!"
+        exit 1
+    else
+        echo "edgesite is successfully killed !!"
+    fi
+}
+
 cleanup_files(){
     workdir=$GOPATH/src/github.com/kubeedge/kubeedge
     cd $workdir
@@ -57,8 +72,16 @@ cleanup_files(){
     sudo rm -rf tests/e2e/rootCA.key
     sudo rm -rf tests/e2e/rootCA.srl
     sudo rm -rf tests/e2e/deployment/deployment.test
+    sudo rm -rf tests/e2e/edgesite/edgesite.test
 }
 
-kill_edge_core
-kill_edgecontroller
+if [ "deployment" = ${setuptype} ]; then
+    kill_edge_core
+    kill_edgecontroller
+fi
+
+if [ "edgesite" = ${setuptype} ]; then
+    kill_edgesite
+fi
+
 cleanup_files

@@ -5,6 +5,7 @@ all:
 	cd cloud && $(MAKE)
 	cd edge && $(MAKE)
 	cd keadm && $(MAKE)
+	cd edgesite && $(MAKE)
 else ifeq ($(WHAT),cloud)
 # make all what=cloud, build cloud binary
 all:
@@ -17,6 +18,10 @@ else ifeq ($(WHAT),keadm)
 all:
 # make all what=edge, build edge binary
 	cd keadm && $(MAKE)
+else ifeq ($(WHAT),edgesite)
+all:
+# make all what=edgesite, build edgesite binary
+	cd edgesite && $(MAKE)
 else
 # invalid entry
 all:
@@ -51,7 +56,7 @@ cloud_lint:
 
 .PHONY: e2e_test
 e2e_test:
-	bash tests/e2e/scripts/execute.sh
+	bash tests/e2e/scripts/execute.sh edgesite
 
 .PHONY: performance_test
 performance_test:
