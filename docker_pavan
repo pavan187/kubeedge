@@ -1,0 +1,222 @@
+SETTING UP KUBERNETES CLUSTER USING KUBEADM:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Machine details:
+------------------
+# lsb_release -a
+Distributor ID: Ubuntu
+Description:    Ubuntu 16.04.1 LTS
+Release:        16.04
+Codename:       xenial
+
+# docker version
+Client:
+ Version:      1.13.1
+ API version:  1.26
+ Go version:   go1.6.2
+ Git commit:   092cba3
+ Built:        Thu Nov  2 20:40:23 2017
+ OS/Arch:      linux/amd64
+
+Server:
+ Version:      1.13.1
+ API version:  1.26 (minimum version 1.12)
+ Go version:   go1.6.2
+ Git commit:   092cba3
+ Built:        Thu Nov  2 20:40:23 2017
+ OS/Arch:      linux/amd64
+ Experimental: false
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+########################################################################################################################################################
+Setting up environment
+########################################################################################################################################################
+
+1. Configure the nameserver
+*****************************
+Note: This file will get overwritten in every reboot. So if you are rebooting your machine anytime, then do this step again.
+
+vi /etc/resolv.conf
+
+nameserver 10.20.6.45
+nameserver 10.98.48.39
+nameserver 10.72.255.100
+nameserver 10.72.55.82
+search huawei.com
+
+
+2. Configure apt.conf
+*************************
+vi /etc/apt/apt.conf
+
+Acquire::http::Proxy "http://username:password@proxyblr.huawei.com:8080";
+Acquire::https::Proxy "https://username:password@proxyblr.huawei.com:8080";
+
+
+########################################################################################################################################################
+Installing Docker
+########################################################################################################################################################
+
+1. Install docker (Skip this step if already installed)
+*********************************************************
+
+i) Set proxy in environment
+------------------------------
+$ export http_proxy=http://username:password@proxyblr.huawei.com:8080
+$ export https_proxy=https://username:password@proxyblr.huawei.com:8080
+
+ii) Install docker.io
+------------------------
+$ sudo apt install docker.io
+
+iii) Unset proxy from environment
+------------------------------------
+$ unset http_proxy https_proxy
+
+
+2. Configure docker to run behind proxy
+*****************************************
+
+$ sudo mkdir -p /etc/systemd/system/docker.service.d
+
+ii) Create http_proxy configuration
+------------------------------------
+$ sudo vim /etc/systemd/system/docker.service.d/http-proxy.conf
+
+[Service]
+Environment="HTTP_PROXY=http://username:password@proxyhk.huawei.com:8080"
+
+iii) Create https proxy configuration
+--------------------------------------- 
+$ sudo vim /etc/systemd/system/docker.service.d/https-proxy.conf
+ 
+[Service]
+Environment="HTTPS_PROXY=http://username:password@proxyhk.huawei.com:8080"
+
+iv) Restart the Docker service and reload the docker daemon 
+-------------------------------------------------------------
+$ sudo systemctl daemon-reload
+$ sudo systemctl restart docker
+
+v) Confirm the docker Environment Variables
+---------------------------------------------
+$ systemctl show --property=Environment docker
+
+
+3. Verify docker installation
+*******************************
+$ sudo docker run hello-world
+
+########################################################################################################################################################
+Setting up kubernetes cluster
+########################################################################################################################################################
+
+1. Set proxy in environment
+****************************
+$ sudo -i
+# export http_proxy=http://username:password@proxyblr.huawei.com:8080
+# export https_proxy=https://username:password@proxyblr.huawei.com:8080
+
+2. Install kubectl
+*********************
+# curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+
+# chmod +x ./kubectl
+
+# mv ./kubectl /usr/local/bin/kubectl
+
+3. Configure apt to skip verification of https://packages.cloud.google.com
+****************************************************************************
+# vi /etc/apt/apt.conf
+Acquire::https::packages.cloud.google.com::Verify-Peer "false";
+
+3. Install Kubeadm and Kubelet
+**********************************
+# apt-get update && apt-get install -y apt-transport-https
+
+# wget --no-check-certificate https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+# apt-key add apt-key.gpg
+
+# cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+deb http://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+
+# apt-get update
+
+# apt-get install -y kubelet kubeadm
+
+
+Create Kubernetes clusetr:
+*****************************
+
+Unset proxy from environment
+----------------------------------
+# unset http_proxy https_proxy
+
+Make swap off
+-----------------
+# swapoff -a
+
+Check for kubeadm version
+----------------------------
+# kubeadm version
+
+e.g: kubeadm version: &version.Info{Major:"1", Minor:"9", GitVersion:"v1.9.0", GitCommit:"925c127ec6b946659ad0fd596fa959be43f0cc05", GitTreeState:"clean", BuildDate:"2017-12-15T20:55:30Z", GoVersion:"go1.9.2", Compiler:"gc", Platform:"linux/amd64"}
+
+Use the same kubeadm version (GitVersion) to create the cluster
+-----------------------------------------------------------------
+# kubeadm init --pod-network-cidr=10.244.0.0/16 --kubernetes-version=v1.9.0
+
+Run these commands to enable kubectl to work
+-----------------------------------------------
+# mkdir -p $HOME/.kube
+# sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+# sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Verify the docker processes are running for k8s components
+-----------------------------------------------------------
+# docker ps
+
+Verify respective pods are running for the k8s components
+-----------------------------------------------------------
+# kubectl get pods --all-namespaces
+
+Install cni plugin
+--------------------
+https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+write the content of this url into a file.
+# vi kube-flannel.yaml
+
+# kubectl create -f kube-flannel.yaml
+
+Untaint master node so that new pods can schedule there
+----------------------------------------------------------
+# kubectl taint nodes --all node-role.kubernetes.io/master- 
+
+Resetting kubeadm
+-------------------
+#kubeadm reset
+
+########################################################################################################################################################
+Basic Kubectl commands:
+########################################################################################################################################################
+Note1: Below commands will work for all types of kubernetes object like pod, deployment, node, replicaset, etc.
+Note2: If the object is present in a namespace other than default, then add flag: --namespace=<namespace_name>
+
+Create pod: 
+# kubectl create -f pod.yaml
+
+Delete pod:
+# kubectl delete -f pod.yaml
+or
+#kubectl delete pod <pod_name>
+
+Describe pod:
+# kubectl describe pod <pod_name>
+
+Edit pod:
+# kubectl edit pod <pod_name>
+
+
