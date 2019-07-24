@@ -27,3 +27,6 @@ ExecStart=/usr/bin/docker daemon -H fd:// -H tcp://0.0.0.0:2375
 systemctl daemon-reload
 
 sudo service docker restart
+
+
+kubectl expose deployment/cloudcore-deployment-8rwsj --type=NodePort -s192.168.20.128:8080 --v=8
