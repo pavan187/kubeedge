@@ -17,3 +17,13 @@ https://kubernetes.io/docs/setup/production-environment/container-runtimes/#cont
 
 
 kubectl get nodes |grep node |awk '{print $1}' | xargs kubectl delete node
+
+vi /lib/systemd/system/docker.service
+
+[Service]
+ExecStart=
+ExecStart=/usr/bin/docker daemon -H fd:// -H tcp://0.0.0.0:2375
+
+systemctl daemon-reload
+
+sudo service docker restart
