@@ -30,3 +30,20 @@ sudo service docker restart
 
 
 kubectl expose deployment/cloudcore-deployment-8rwsj --type=NodePort -s192.168.20.128:8080 --v=8
+
+
+1. remote add upstream <master branch>
+2. git remote -v
+3. git fetch upstream master:<test branch>
+4. git checkout <test branch>
+5. check git log (last commit history must be same both dujun and me)
+copy the code.
+6. git add -A (not recommended, unless all the changes are belongs to you or else add modifiles seperately)
+7. git commit -m "SDV code commit"
+8. git pull --rebase upstream master
+9. git push origin <testbranch>
+10.got fork repo, create merge request to dujun branch
+
+git commit --amend
+git pull --rebase upstream master
+git push -f origin KubeEdgeSDV
