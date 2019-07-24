@@ -1,0 +1,16 @@
+Goland uninstall
+1. rm -rf /root/.java/.userPrefs/jetbrains
+2. rm -rf ~/.GoLand2019.1
+
+
+192.168.20.151 121.244.95.60     12466/SSH           22
+192.168.20.152  121.244.95.60     12467/SSH           22
+192.168.20.153  121.244.95.60     12468/SSH           22
+192.168.20.154  121.244.95.60     12469/SSH           22
+192.168.20.155  121.244.95.60     12470/SSH           22
+192.168.20.156  121.244.95.60     12471/SSH           22
+
+docker run -d -p 3000:3000 --name prow --restart always --cpu-period=50000 --cpu-quota=100000 --memory=1g –privileged kubeedge-bot-prow:latest
+
+
+https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd
