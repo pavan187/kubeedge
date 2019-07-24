@@ -14,3 +14,6 @@ docker run -d -p 3000:3000 --name prow --restart always --cpu-period=50000 --cpu
 
 
 https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd
+
+
+kubectl get nodes |grep node |awk '{print $1}' | xargs kubectl delete node
